@@ -1,6 +1,13 @@
 package com.chillpavz.oredetector.forge;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.chillpavz.oredetector.Constants;
+import com.chillpavz.oredetector.config.OreDetectorConfig;
 import com.chillpavz.oredetector.forge.config.OreDetectorConfigData;
 import com.chillpavz.oredetector.registry.ModCreativeTabs;
 import com.chillpavz.oredetector.registry.ModItems;
@@ -17,6 +24,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.registries.RegisterEvent;
 
 /**
@@ -28,9 +36,16 @@ public class OreDetectorForge {
 
     private static final String[] CREATE_MOD_IDS = {"create", "create-fly", "createfly", "create_fly"};
 
+    private static final Pattern DURABILITY_PERCENT =
+            Pattern.compile("^\\s*durabilityPercent\\s*=\\s*(\\d+)", Pattern.MULTILINE);
+
     public OreDetectorForge() {
-        // Registering the spec makes Forge load the file and fire ModConfigEvent.Loading before the
-        // registry events, so the durability multiplier is in place by the time items are created.
+        // Durability is baked into the items when they are created, during RegisterEvent. Forge has
+        // no STARTUP config type (NeoForge added one for exactly this case), and a COMMON config is
+        // not guaranteed to have loaded by then, so that one value is read straight out of the file
+        // first. Everything else is applied normally from ModConfigEvent below.
+        applyDurabilityEarly();
+
         ModLoadingContext context = ModLoadingContext.get();
         context.registerConfig(ModConfig.Type.COMMON, OreDetectorConfigData.SPEC);
 
@@ -45,6 +60,27 @@ public class OreDetectorForge {
         // reference lives behind this guard in a separate class.
         if (FMLEnvironment.dist == Dist.CLIENT) {
             OreDetectorConfigScreenRegistrar.register();
+        }
+    }
+
+    /**
+     * Reads {@code durabilityPercent} out of the config TOML before registration. Deliberately a
+     * plain text read rather than the config API: the whole point is that this runs before Forge
+     * has loaded the spec, so {@code ConfigValue.get()} is not available yet. On the first run the
+     * file does not exist and the defaults are already correct.
+     */
+    private static void applyDurabilityEarly() {
+        Path file = FMLPaths.CONFIGDIR.get().resolve(Constants.MOD_ID + "-common.toml");
+        if (!Files.isRegularFile(file)) {
+            return;
+        }
+        try {
+            Matcher matcher = DURABILITY_PERCENT.matcher(Files.readString(file));
+            if (matcher.find()) {
+                OreDetectorConfig.applyDurabilityPercent(Integer.parseInt(matcher.group(1)));
+            }
+        } catch (IOException | RuntimeException e) {
+            Constants.LOG.warn("Could not pre-read the detector durability setting; using the default", e);
         }
     }
 

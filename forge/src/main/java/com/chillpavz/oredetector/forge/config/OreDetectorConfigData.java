@@ -22,8 +22,10 @@ public final class OreDetectorConfigData {
 
     public static final int DURABILITY_PERCENT_MIN = 25;
     public static final int DURABILITY_PERCENT_MAX = 400;
+    public static final int DURABILITY_PERCENT_DEFAULT = 100;
     public static final int SOUND_VOLUME_PERCENT_MIN = 0;
     public static final int SOUND_VOLUME_PERCENT_MAX = 100;
+    public static final int SOUND_VOLUME_PERCENT_DEFAULT = 40;
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -47,11 +49,11 @@ public final class OreDetectorConfigData {
                         OreDetectorConfig.COOLDOWN_MIN, OreDetectorConfig.COOLDOWN_MAX);
         DURABILITY_PERCENT = builder
                 .comment("Detector durability as a percentage of the default. Requires a restart to apply.")
-                .defineInRange("durabilityPercent", 100, DURABILITY_PERCENT_MIN, DURABILITY_PERCENT_MAX);
+                .defineInRange("durabilityPercent", DURABILITY_PERCENT_DEFAULT, DURABILITY_PERCENT_MIN, DURABILITY_PERCENT_MAX);
         SOUND_VOLUME_PERCENT = builder
                 .comment("Detector beep volume as a percentage. 0 disables the beep, which also stops",
                         "it from triggering sculk sensors.")
-                .defineInRange("soundVolumePercent", 40, SOUND_VOLUME_PERCENT_MIN, SOUND_VOLUME_PERCENT_MAX);
+                .defineInRange("soundVolumePercent", SOUND_VOLUME_PERCENT_DEFAULT, SOUND_VOLUME_PERCENT_MIN, SOUND_VOLUME_PERCENT_MAX);
 
         builder.pop();
         SPEC = builder.build();
