@@ -1,13 +1,13 @@
 # Ore Detector Reborn
 
-Simple handheld **ore detectors** for Minecraft **26.2** (Fabric & NeoForge).
+Simple handheld **ore detectors** for Minecraft **26.1.2** (Fabric & NeoForge).
 
 Craft a detector, **right-click a surface**, and it scans the blocks *behind* that surface for a
 specific ore: a short beep and an action-bar message tell you whether it's there and how much.
 A lightweight, no-cheats way to decide where to start digging.
 
 > **Unofficial, updated port of [Ore Detector](https://modrinth.com/mod/ore-detector) by restonic4.**
-> This is a community continuation for Minecraft 26.2; it is not made by or affiliated with the original author.
+> This is a community continuation for Minecraft 26.1.2; it is not made by or affiliated with the original author.
 > Original mod © restonic4, MIT. Port and expansion by chillpavz, MIT.
 
 ## Features
