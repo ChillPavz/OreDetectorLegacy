@@ -8,7 +8,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -41,11 +41,13 @@ public class OreDetectorFabric implements ModInitializer {
             Registry.register(BuiltInRegistries.ITEM, ModItems.ZINC_ID, ModItems.createZinc());
         }
 
-        CreativeModeTabEvents.modifyOutputEvent(ModCreativeTabs.KEY).register(output -> {
+        // 1.21.11's Fabric API still calls this ItemGroupEvents; it is renamed to
+        // CreativeModeTabEvents in the 26.x builds.
+        ItemGroupEvents.modifyEntriesEvent(ModCreativeTabs.KEY).register(entries -> {
             ModItems.ITEMS.values().forEach(item ->
-                    output.accept(new ItemStack(item), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS));
+                    entries.accept(new ItemStack(item), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS));
             if (createLoaded) {
-                output.accept(new ItemStack(ModItems.ZINC_DETECTOR), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+                entries.accept(new ItemStack(ModItems.ZINC_DETECTOR), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             }
         });
     }
