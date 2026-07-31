@@ -1,6 +1,7 @@
 modLoader = "javafml" #mandatory
 loaderVersion = "${forge_loader_version_range}" #mandatory
 license = "${license}"
+
 [[mods]] #mandatory
 modId = "${mod_id}" #mandatory
 version = "${version}" #mandatory
@@ -9,15 +10,19 @@ logoFile = "${mod_id}.png" #optional
 credits = "${credits}" #optional
 authors = "${mod_author}" #optional
 description = '''${description}''' #mandatory (Supports multiline text)
-[[dependencies.${mod_id}]] #optional
-modId = "forge" #mandatory
-type = "required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
-versionRange = "${forge_loader_version_range}" #mandatory
+
+# NOTE: classic Forge uses `mandatory = true/false` here. `type = "required"` is NeoForge's syntax and
+# makes Forge reject the jar outright with "Missing required field mandatory in dependency".
+[[dependencies.${mod_id}]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge_version},)"
 ordering = "NONE"
 side = "BOTH"
+
 [[dependencies.${mod_id}]]
 modId = "minecraft"
-type = "required"
+mandatory = true
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
