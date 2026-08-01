@@ -1,24 +1,70 @@
-# MultiLoader Template
+# Ore Detector Reborn
 
-This project provides a Gradle project template that can compile mods for both Forge and Fabric using a common sourceset. This project does not require any third party libraries or dependencies. If you have any questions or want to discuss the project join our [Discord](https://discord.myceliummod.network).
+Simple handheld **ore detectors** for Minecraft **1.20 and 1.20.1** (Fabric & Forge).
 
-## Getting Started
+Craft a detector, **right-click a surface**, and it scans the blocks *behind* that surface for a
+specific ore: a short beep and an action-bar message tell you whether it's there and how much.
+A lightweight, no-cheats way to decide where to start digging.
 
-## IntelliJ IDEA
-This guide will show how to import the MultiLoader Template into IntelliJ IDEA. The setup process is roughly equivalent to setting up Forge and Fabric independently and should be very familiar to anyone who has worked with their MDKs.
+> **Unofficial, updated port of [Ore Detector](https://modrinth.com/mod/ore-detector) by restonic4.**
+> This is a community continuation for Minecraft 1.20.x; it is not made by or affiliated with the original author.
+> Original mod © restonic4, MIT. Port and expansion by chillpavz, MIT.
 
-1. Clone or download this repository to your computer.
-2. Configure the project by editing the `group`, `mod_name`, `mod_author`, and `mod_id` properties in the `gradle.properties` file. You will also need to change the `rootProject.name`  property in `settings.gradle`, this should match the folder name of your project, or else IDEA may complain.
-3. Open the template's root folder as a new project in IDEA. This is the folder that contains this README file and the gradlew executable.
-4. If your default JVM/JDK is not Java 17 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`and changing the value to a valid Java 17 JVM. You will also need to set the Project SDK to Java 17. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
-5. Open the Gradle tab in IDEA if it has not already been opened. Navigate to `Your Project > Common > Tasks > vanilla gradle > decompile`. Run this task to decompile Minecraft.
-6. Open your Run/Debug Configurations. Under the Application category there should now be options to run Forge and Fabric projects. Select one of the client options and try to run it.
-7. Assuming you were able to run the game in step 7 your workspace should now be set up.
+## Features
 
-### Eclipse
-While it is possible to use this template in Eclipse it is not recommended. During the development of this template multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. While we continue to work with these tools to report and resolve issues support for projects like these are not there yet. For now Eclipse is considered unsupported by this project. The development cycle for build tools is notoriously slow so there are no ETAs available.
+- **Eleven detectors:** Iron, Gold, Diamond, Emerald, Quartz, Copper, Coal, Amethyst, Netherite (Ancient Debris), Lapis Lazuli and Redstone (plus an optional Zinc detector with Create).
+- **Directional scanning:** point at the ground to reach deep (16 blocks), or at a wall/ceiling for a
+  shorter range (8 blocks), across a 3×3 column.
+- **Clear feedback:** an action-bar message tinted to the ore's colour tells you the exact count
+  (e.g. *"Detected 4 Iron Ore nearby"*), plus a beep.
+- **Durability & repair:** detectors wear down (1 per scan + 1 per ore found), repair in an anvil
+  with their material, and support Mending/Unbreaking.
+- **Per-detector cooldowns:** using one detector never puts the rest on cooldown.
+- **In-game config** for reach, column radius, cooldown, durability and volume, on both loaders.
 
-## Development Guide
-When using this template the majority of your mod is developed in the Common project. The Common project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The Common project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the Forge or Fabric project.
+## One jar, two Minecraft versions, and NeoForge for free
 
-Loader specific projects such as the Forge and Fabric project are used to load the Common project into the game. These projects also define code that is specific to that loader. Loader specific projects can access all of the code in the Common project. It is important to remember that the Common project can not access code from loader specific projects.
+A single build per loader covers **1.20 and 1.20.1**. The upper bound stops below 1.20.2, which moved
+the data-pack folders and rewrote networking.
+
+**There is no NeoForge module.** At this Minecraft version NeoForge still uses the
+`net.minecraftforge` package names and the `forge` mod id, so the Forge jar runs on it unchanged,
+Create itself ships one file tagged for both loaders here. The version ranges accept NeoForge's
+47.1.x builds, so the Forge download is also the NeoForge download.
+
+## Config
+
+Cloth Config on both loaders: 11.1.136 ships one build per loader covering both game versions.
+On Fabric the button comes from Mod Menu; on Forge it's the Config button in the mods list.
+
+## Dependencies
+
+| Mod | Fabric | Forge | Notes |
+|-----|:---:|:---:|-------|
+| Fabric API | required | — | |
+| Cloth Config | required | required | powers the config screen |
+| Mod Menu | optional | — | adds the config button on Fabric |
+| Create | — | optional | unlocks the Zinc Detector |
+| Universal Ores | optional | — | its ore variants are detected too |
+
+The optional mods land on opposite loaders here: at 1.20.1 **Create is Forge/NeoForge only**, while
+**Universal Ores is Fabric/Quilt only**. Create has no 1.20 build at all, so the Zinc Detector is a
+1.20.1 feature; Universal Ores covers both versions.
+
+## Building
+
+Requires a JDK that Gradle 8.11 supports. **JDK 22** is what this was built with. Gradle provisions
+a JDK 17 toolchain to compile against. Forge uses ModDevGradle (`legacyForge`), not ForgeGradle.
+
+```bash
+JAVA_HOME=/c/Program\ Files/Java/jdk-22 ./gradlew build
+```
+
+Output jars are in `fabric/build/libs/` and `forge/build/libs/` (ignore the `-sources` / `-javadoc`
+files).
+
+## Credits & License
+
+- Original **Ore Detector** by **restonic4**: https://github.com/restonic4/OreDetector
+- Multi-loader project structure based on Jared's [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template).
+- Licensed under the **MIT License** (see `LICENSE`), preserving the original author's copyright.
