@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "forge:condition": {
+    "type": "forge:item_exists",
+    "item": "create:zinc_ingot"
+  },
+  "pattern": [
+    "  S",
+    " IS",
+    "ICS"
+  ],
+  "key": {
+    "I": {
+      "item": "create:zinc_ingot"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "oredetector:zinc_detector",
+    "count": 1
+  }
+}
