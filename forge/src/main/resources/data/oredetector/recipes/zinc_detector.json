@@ -1,9 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "forge:conditions": [
+  "conditions": [
     {
-      "type": "forge:item_exists",
-      "item": "create:zinc_ingot"
+      "type": "forge:mod_loaded",
+      "modid": "create"
     }
   ],
   "pattern": [
