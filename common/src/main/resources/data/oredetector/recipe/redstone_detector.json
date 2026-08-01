@@ -6,9 +6,15 @@
     "ICS"
   ],
   "key": {
-    "I": "minecraft:redstone",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:redstone_detector",

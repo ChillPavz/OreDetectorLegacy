@@ -6,9 +6,15 @@
     "ICS"
   ],
   "key": {
-    "I": "minecraft:iron_ingot",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:iron_detector",

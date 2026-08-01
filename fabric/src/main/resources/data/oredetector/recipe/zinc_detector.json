@@ -4,7 +4,9 @@
     {
       "condition": "fabric:registry_contains",
       "registry": "minecraft:item",
-      "values": [ "create:zinc_ingot" ]
+      "values": [
+        "create:zinc_ingot"
+      ]
     }
   ],
   "pattern": [
@@ -13,9 +15,15 @@
     "ICS"
   ],
   "key": {
-    "I": "create:zinc_ingot",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "create:zinc_ingot"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:zinc_detector",

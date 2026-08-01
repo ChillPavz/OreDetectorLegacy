@@ -6,9 +6,15 @@
     "ICS"
   ],
   "key": {
-    "I": "minecraft:gold_ingot",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "minecraft:gold_ingot"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:gold_detector",

@@ -6,9 +6,15 @@
     "ICS"
   ],
   "key": {
-    "I": "minecraft:coal",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "minecraft:coal"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:coal_detector",

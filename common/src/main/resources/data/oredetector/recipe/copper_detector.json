@@ -6,9 +6,15 @@
     "ICS"
   ],
   "key": {
-    "I": "minecraft:copper_ingot",
-    "C": "minecraft:comparator",
-    "S": "minecraft:stick"
+    "I": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
   },
   "result": {
     "id": "oredetector:copper_detector",
