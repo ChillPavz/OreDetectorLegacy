@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -33,27 +33,27 @@ public final class ModdedOres {
     private static final String[] UNIVERSAL_STONES =
             {"andesite", "diorite", "granite", "tuff", "calcite", "blackstone", "basalt"};
 
-    private final List<Identifier> ids;
+    private final List<ResourceLocation> ids;
     private volatile Set<Block> blocks;
 
-    private ModdedOres(List<Identifier> ids) {
+    private ModdedOres(List<ResourceLocation> ids) {
         this.ids = ids;
     }
 
     /** Matches the given block paths in {@code namespace}. */
     public static ModdedOres of(String namespace, String... paths) {
-        List<Identifier> ids = new ArrayList<>(paths.length);
+        List<ResourceLocation> ids = new ArrayList<>(paths.length);
         for (String path : paths) {
-            ids.add(Identifier.fromNamespaceAndPath(namespace, path));
+            ids.add(ResourceLocation.fromNamespaceAndPath(namespace, path));
         }
         return new ModdedOres(ids);
     }
 
     /** Every Universal Ores variant of a vanilla ore, e.g. {@code "iron"} -> {@code universal_ores:andesite_iron_ore}. */
     public static ModdedOres universalOres(String ore) {
-        List<Identifier> ids = new ArrayList<>(UNIVERSAL_STONES.length);
+        List<ResourceLocation> ids = new ArrayList<>(UNIVERSAL_STONES.length);
         for (String stone : UNIVERSAL_STONES) {
-            ids.add(Identifier.fromNamespaceAndPath(UNIVERSAL_ORES, stone + "_" + ore + "_ore"));
+            ids.add(ResourceLocation.fromNamespaceAndPath(UNIVERSAL_ORES, stone + "_" + ore + "_ore"));
         }
         return new ModdedOres(ids);
     }
@@ -69,10 +69,10 @@ public final class ModdedOres {
     /** Looks the ids up in the (by now frozen) block registry; unknown ids are dropped. */
     private Set<Block> resolve() {
         Set<Block> found = new HashSet<>();
-        for (Identifier id : ids) {
-            // BLOCK is a defaulted registry, so getValue would hand back AIR for an unknown id.
+        for (ResourceLocation id : ids) {
+            // BLOCK is a defaulted registry, so get() would hand back AIR for an unknown id.
             if (BuiltInRegistries.BLOCK.containsKey(id)) {
-                found.add(BuiltInRegistries.BLOCK.getValue(id));
+                found.add(BuiltInRegistries.BLOCK.get(id));
             }
         }
         Set<Block> resolved = Set.copyOf(found);

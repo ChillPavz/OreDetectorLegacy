@@ -1,6 +1,6 @@
 package com.chillpavz.oredetector.neoforge.config;
 
-import me.shedaniel.autoconfig.AutoConfigClient;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -15,6 +15,6 @@ public final class OreDetectorConfigScreen {
 
     public static void register(ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class,
-                (mod, parent) -> AutoConfigClient.getConfigScreen(OreDetectorConfigData.class, parent).get());
+                (mod, parent) -> AutoConfig.getConfigScreen(OreDetectorConfigData.class, parent).get());
     }
 }

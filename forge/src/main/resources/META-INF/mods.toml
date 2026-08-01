@@ -26,3 +26,12 @@ mandatory = true
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+# Cloth Config has a Forge build at this MC version, so unlike the 1.21.11 port the Forge module uses
+# the same generated screen as Fabric/NeoForge instead of a hand-written one.
+[[dependencies.${mod_id}]]
+modId = "cloth_config"
+mandatory = true
+versionRange = "[${cloth_config_version},)"
+ordering = "NONE"
+side = "BOTH"

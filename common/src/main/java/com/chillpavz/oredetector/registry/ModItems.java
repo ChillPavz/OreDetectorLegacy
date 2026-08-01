@@ -1,7 +1,9 @@
 package com.chillpavz.oredetector.registry;
 
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Function;
 
 import com.chillpavz.oredetector.Constants;
@@ -15,14 +17,16 @@ import com.chillpavz.oredetector.item.GoldDetector;
 import com.chillpavz.oredetector.item.IronDetector;
 import com.chillpavz.oredetector.item.LapisDetector;
 import com.chillpavz.oredetector.item.NetheriteDetector;
+import com.chillpavz.oredetector.item.OreDetectorItem;
 import com.chillpavz.oredetector.item.QuartzDetector;
 import com.chillpavz.oredetector.item.RedstoneDetector;
 import com.chillpavz.oredetector.item.ZincDetector;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
@@ -33,7 +37,7 @@ import net.minecraft.world.item.Items;
  */
 public final class ModItems {
 
-    public static final Map<Identifier, Item> ITEMS = new LinkedHashMap<>();
+    public static final Map<ResourceLocation, Item> ITEMS = new LinkedHashMap<>();
 
     // Durability is tuned inverse to ore rarity/value: abundant, big-vein ores (coal/copper/iron) get
     // the most scans; rare, high-value ores (diamond/emerald/netherite) get the fewest so a detector
@@ -50,32 +54,43 @@ public final class ModItems {
     public static final Item EMERALD_DETECTOR = create("emerald_detector", 110, Items.EMERALD, EmeraldDetector::new);
     public static final Item NETHERITE_DETECTOR = create("netherite_detector", 80, Items.NETHERITE_INGOT, NetheriteDetector::new);
 
-    // Optional Create integration. Created LAZILY and only when Create is installed — an item is
-    // built with its id baked in (an "intrusive holder"), and an unregistered one crashes NeoForge
-    // at load ("Some intrusive holders were not registered"). Kept OUT of ITEMS.
-    public static final Identifier ZINC_ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "zinc_detector");
+    // Optional Create integration. Created LAZILY and only when Create is installed, matching the
+    // newer ports; here there is no id baked into the properties, so the item is simply registered
+    // under ZINC_ID by the loader entrypoints. Kept OUT of ITEMS.
+    public static final ResourceLocation ZINC_ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "zinc_detector");
     public static Item ZINC_DETECTOR = null;
+
+    /**
+     * Repair ingredient per detector. On 1.21.2+ this is declared with {@code Properties.repairable},
+     * which does not exist here, so it is looked up from {@link OreDetectorItem#isValidRepairItem}
+     * instead. Keeping it in a map avoids threading the material through all twelve subclasses.
+     */
+    private static final Map<Item, Predicate<ItemStack>> REPAIR_INGREDIENTS = new IdentityHashMap<>();
 
     private ModItems() {
     }
 
     /** Builds the zinc detector on demand; call ONLY when Create is present, then register it. */
     public static Item createZinc() {
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ZINC_ID);
-        TagKey<Item> zincIngots = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "ingots/zinc"));
-        ZINC_DETECTOR = new ZincDetector(new Item.Properties().setId(key).durability(OreDetectorConfig.scaleDurability(200)).repairable(zincIngots));
+        TagKey<Item> zincIngots = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "ingots/zinc"));
+        ZINC_DETECTOR = new ZincDetector(new Item.Properties().durability(OreDetectorConfig.scaleDurability(200)));
+        REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> stack.is(zincIngots));
         return ZINC_DETECTOR;
     }
 
+    /** Whether {@code ingredient} repairs {@code detector} in an anvil. */
+    public static boolean isRepairIngredient(Item detector, ItemStack ingredient) {
+        Predicate<ItemStack> predicate = REPAIR_INGREDIENTS.get(detector);
+        return predicate != null && predicate.test(ingredient);
+    }
+
     private static Item create(String name, int durability, Item repairMaterial, Function<Item.Properties, Item> factory) {
-        Identifier id = Identifier.fromNamespaceAndPath(Constants.MOD_ID, name);
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
         Item.Properties properties = new Item.Properties()
-                .setId(key)
-                .durability(OreDetectorConfig.scaleDurability(durability))
-                .repairable(repairMaterial);
+                .durability(OreDetectorConfig.scaleDurability(durability));
         Item item = factory.apply(properties);
         ITEMS.put(id, item);
+        REPAIR_INGREDIENTS.put(item, stack -> stack.is(repairMaterial));
         return item;
     }
 

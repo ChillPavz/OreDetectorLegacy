@@ -3,7 +3,7 @@ package com.chillpavz.oredetector.registry;
 import com.chillpavz.oredetector.Constants;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class ModCreativeTabs {
 
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "ore_detector");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "ore_detector");
     public static final ResourceKey<CreativeModeTab> KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ID);
 
     public static final CreativeModeTab MAIN = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)

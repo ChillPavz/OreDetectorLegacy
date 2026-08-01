@@ -31,6 +31,7 @@
 
   "hud.oredetector.found": "Detected %s %s nearby",
   "hud.oredetector.none": "No %s detected",
+  "hud.oredetector.cooldown": "Detector is recharging",
 
   "tooltip.oredetector.usage": "Right-click a surface to scan it for %s.",
   "tooltip.oredetector.range": "Reaches %s blocks down, %s blocks sideways or up.",

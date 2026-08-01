@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.chillpavz.oredetector.Constants;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 /**
@@ -13,7 +13,7 @@ import net.minecraft.sounds.SoundEvent;
  */
 public final class ModSounds {
 
-    public static final Map<Identifier, SoundEvent> SOUND_EVENTS = new LinkedHashMap<>();
+    public static final Map<ResourceLocation, SoundEvent> SOUND_EVENTS = new LinkedHashMap<>();
 
     public static final SoundEvent NOT_FOUND = create("not_found");
     public static final SoundEvent FOUND = create("found");
@@ -22,7 +22,7 @@ public final class ModSounds {
     }
 
     private static SoundEvent create(String name) {
-        Identifier id = Identifier.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
         SoundEvent sound = SoundEvent.createVariableRangeEvent(id);
         SOUND_EVENTS.put(id, sound);
         return sound;

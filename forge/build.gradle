@@ -1,16 +1,13 @@
 plugins {
     id 'multiloader-loader'
-    id 'net.minecraftforge.gradle' version '[6.0.46,6.2)'
-    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
 }
 base {
-    // The template used mod_name here, which puts spaces in the jar filename; mod_id matches what
-    // multiloader-common gives the other modules.
+    // mod_id, not mod_name: mod_name puts spaces in the jar filename.
     archivesName = "${mod_id}-forge-${minecraft_version}"
 }
-// The template's mixin plugin, config() declarations and MixinConfigs manifest entry are removed:
-// this mod has no mixins, and naming configs that do not exist makes Mixin abort at startup with
-// "The specified resource 'oredetector.mixins.json' was invalid or could not be read".
+// The template's mixin plugin, config() calls and MixinConfigs manifest entry are removed: this mod
+// has no mixins, and naming configs that do not exist makes Forge abort at startup.
 
 minecraft {
     mappings channel: 'official', version: minecraft_version
@@ -67,8 +64,18 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+repositories {
+    maven { url = 'https://maven.shedaniel.me/' }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Cloth Config (AutoConfig). Unlike 1.21.11, a Forge build of Cloth exists at this version.
+    implementation("me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}")
+
+    // Forge's hack fix
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 }
 
 publishing {
@@ -83,23 +90,4 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
-}
-
-// Implement mcgradleconventions loader attribute
-def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
-    configurations.named("$variant") {
-        attributes {
-            attribute(loaderAttribute, 'forge')
-        }
-    }
-}
-sourceSets.configureEach {
-    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant->
-        configurations.named("$variant") {
-            attributes {
-                attribute(loaderAttribute, 'forge')
-            }
-        }
-    }
 }

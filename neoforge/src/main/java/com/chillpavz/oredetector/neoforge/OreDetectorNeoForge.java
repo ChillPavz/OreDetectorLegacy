@@ -37,7 +37,8 @@ public class OreDetectorNeoForge {
         eventBus.addListener(OreDetectorNeoForge::onRegister);
         eventBus.addListener(OreDetectorNeoForge::onBuildTabContents);
 
-        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+        // FMLEnvironment.dist is a FIELD on NeoForge 21.1; the getDist() method only arrives in 26.x.
+        if (FMLEnvironment.dist == Dist.CLIENT) {
             OreDetectorConfigScreen.register(container);
         }
     }
