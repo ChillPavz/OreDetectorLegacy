@@ -39,6 +39,16 @@ public final class ModItems {
 
     public static final Map<ResourceLocation, Item> ITEMS = new LinkedHashMap<>();
 
+    /**
+     * Repair ingredient per detector. On 1.21.2+ this is declared with {@code Properties.repairable},
+     * which does not exist here, so it is looked up from {@link OreDetectorItem#isValidRepairItem}
+     * instead. Keeping it in a map avoids threading the material through all twelve subclasses.
+     *
+     * <p>MUST be declared before the detector fields below: static initialisers run in source order,
+     * and each {@code create(...)} call writes into this map.
+     */
+    private static final Map<Item, Predicate<ItemStack>> REPAIR_INGREDIENTS = new IdentityHashMap<>();
+
     // Durability is tuned inverse to ore rarity/value: abundant, big-vein ores (coal/copper/iron) get
     // the most scans; rare, high-value ores (diamond/emerald/netherite) get the fewest so a detector
     // can't cheaply farm them. See CHANGELOG for the reasoning.
@@ -59,13 +69,6 @@ public final class ModItems {
     // under ZINC_ID by the loader entrypoints. Kept OUT of ITEMS.
     public static final ResourceLocation ZINC_ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "zinc_detector");
     public static Item ZINC_DETECTOR = null;
-
-    /**
-     * Repair ingredient per detector. On 1.21.2+ this is declared with {@code Properties.repairable},
-     * which does not exist here, so it is looked up from {@link OreDetectorItem#isValidRepairItem}
-     * instead. Keeping it in a map avoids threading the material through all twelve subclasses.
-     */
-    private static final Map<Item, Predicate<ItemStack>> REPAIR_INGREDIENTS = new IdentityHashMap<>();
 
     private ModItems() {
     }
