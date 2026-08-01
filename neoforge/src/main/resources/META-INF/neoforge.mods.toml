@@ -15,7 +15,10 @@ description = '''${description}''' #mandatory (Supports multiline text)
 [[dependencies.${mod_id}]] #optional
 modId = "neoforge" #mandatory
 type="required" #mandatory (Can be one of "required", "optional", "incompatible" or "discouraged")
-versionRange = "[${neoforge_version},)" #mandatory
+# NOT "[${neoforge_version},)" — that pins to the exact build we compiled against or newer, and
+# NeoForge builds are numbered <mc>.<build>, so 26.1.1.15 sorts BELOW 26.1.2.7 and the mod is
+# refused on 26.1/26.1.1 before the minecraft dependency is even considered.
+versionRange = "${neoforge_version_range}" #mandatory
 ordering = "NONE" # The order that this dependency should load in relation to your mod, required to be either 'BEFORE' or 'AFTER' if the dependency is not mandatory
 side = "BOTH" # Side this dependency is applied on - 'BOTH', 'CLIENT' or 'SERVER'
 [[dependencies.${mod_id}]]
