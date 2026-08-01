@@ -75,9 +75,15 @@ public final class ModItems {
 
     /** Builds the zinc detector on demand; call ONLY when Create is present, then register it. */
     public static Item createZinc() {
-        TagKey<Item> zincIngots = TagKey.create(Registries.ITEM, new ResourceLocation("c", "ingots/zinc"));
+        // Two tag conventions are in play at this Minecraft version: Forge mods use `forge:`, Fabric
+        // mods use `c:` (they only converged on `c:` later). Create is Forge-only here and ships
+        // forge:ingots/zinc - verified from its 1.20.1 jar - so matching only `c:` would leave the
+        // Zinc Detector unrepairable in an anvil, silently. Accept either; a tag no mod fills is
+        // simply empty, so the unused one never matches.
+        TagKey<Item> forgeZinc = TagKey.create(Registries.ITEM, new ResourceLocation("forge", "ingots/zinc"));
+        TagKey<Item> commonZinc = TagKey.create(Registries.ITEM, new ResourceLocation("c", "ingots/zinc"));
         ZINC_DETECTOR = new ZincDetector(new Item.Properties().durability(OreDetectorConfig.scaleDurability(200)));
-        REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> stack.is(zincIngots));
+        REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> stack.is(forgeZinc) || stack.is(commonZinc));
         return ZINC_DETECTOR;
     }
 
