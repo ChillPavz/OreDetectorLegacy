@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class ModCreativeTabs {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "ore_detector");
+    public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "ore_detector");
     public static final ResourceKey<CreativeModeTab> KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ID);
 
     public static final CreativeModeTab MAIN = CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)

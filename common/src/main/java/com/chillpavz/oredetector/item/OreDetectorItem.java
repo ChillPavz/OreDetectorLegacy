@@ -9,18 +9,17 @@ import com.chillpavz.oredetector.registry.ModSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,10 +37,13 @@ public class OreDetectorItem extends Item {
 
     /**
      * NBT key holding the game time at which this particular detector becomes usable again.
-     * 1.21.1's {@code ItemCooldowns} is keyed by {@code Item}, not by stack or cooldown group (that
+     * {@code ItemCooldowns} is keyed by {@code Item} here, not by stack or cooldown group (that
      * arrived in 1.21.2), so vanilla cooldowns would apply to every detector of the same kind at
      * once. The expiry is tracked per stack instead, at the cost of vanilla's cooldown sweep on the
      * icon — hence the explicit "recharging" message when a scan is refused.
+     *
+     * <p>Data components do not exist at this version, so this lives in the stack's plain NBT tag
+     * rather than in {@code CUSTOM_DATA} as on 1.21.1.
      */
     private static final String COOLDOWN_UNTIL_TAG = "OreDetectorCooldownUntil";
 
@@ -74,18 +76,19 @@ public class OreDetectorItem extends Item {
             }
 
             if (player != null) {
+                // MutableComponent.withColor(int) arrives in 1.21; set the style directly here.
                 Component message = found > 0
-                        ? Component.translatable("hud.oredetector.found", found, getOreName()).withColor(getOreColor())
+                        ? Component.translatable("hud.oredetector.found", found, getOreName())
+                                .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(getOreColor())))
                         : Component.translatable("hud.oredetector.none", getOreName()).withStyle(ChatFormatting.GRAY);
                 player.displayClientMessage(message, true);
             }
 
             if (player != null) {
                 applyCooldown(stack, level);
-                // 1 for the scan itself, plus 1 per ore found.
-                // The stack is the one in the used hand, so map that hand straight to its slot.
-                stack.hurtAndBreak(1 + found, player,
-                        context.getHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+                // 1 for the scan itself, plus 1 per ore found. This version takes a break callback
+                // rather than a slot; broadcastBreakEvent plays the vanilla break animation.
+                stack.hurtAndBreak(1 + found, player, p -> p.broadcastBreakEvent(context.getHand()));
             }
         }
         return InteractionResult.SUCCESS;
@@ -93,14 +96,13 @@ public class OreDetectorItem extends Item {
 
     /** Whether this particular detector is still recharging. */
     private static boolean isOnCooldown(ItemStack stack, Level level) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data != null && level.getGameTime() < data.copyTag().getLong(COOLDOWN_UNTIL_TAG);
+        CompoundTag tag = stack.getTag();
+        return tag != null && level.getGameTime() < tag.getLong(COOLDOWN_UNTIL_TAG);
     }
 
     /** Starts the cooldown for THIS detector only, leaving other detectors of the same kind usable. */
     private static void applyCooldown(ItemStack stack, Level level) {
-        long until = level.getGameTime() + OreDetectorConfig.cooldownTicks;
-        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putLong(COOLDOWN_UNTIL_TAG, until));
+        stack.getOrCreateTag().putLong(COOLDOWN_UNTIL_TAG, level.getGameTime() + OreDetectorConfig.cooldownTicks);
     }
 
     /** Counts matching ore in an N x N beam that starts at {@code origin} and extends along {@code dir}. */
@@ -138,11 +140,11 @@ public class OreDetectorItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> lines, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Level level, List<Component> lines, TooltipFlag flag) {
         lines.add(Component.translatable("tooltip.oredetector.usage", getOreName()).withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("tooltip.oredetector.range", OreDetectorConfig.downReach, OreDetectorConfig.sideReach)
                 .withStyle(ChatFormatting.DARK_GRAY));
-        super.appendHoverText(stack, context, lines, flag);
+        super.appendHoverText(stack, level, lines, flag);
     }
 
     @Override

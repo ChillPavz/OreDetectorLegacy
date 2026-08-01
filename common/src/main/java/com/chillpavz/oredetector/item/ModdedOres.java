@@ -44,7 +44,7 @@ public final class ModdedOres {
     public static ModdedOres of(String namespace, String... paths) {
         List<ResourceLocation> ids = new ArrayList<>(paths.length);
         for (String path : paths) {
-            ids.add(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            ids.add(new ResourceLocation(namespace, path));
         }
         return new ModdedOres(ids);
     }
@@ -53,7 +53,7 @@ public final class ModdedOres {
     public static ModdedOres universalOres(String ore) {
         List<ResourceLocation> ids = new ArrayList<>(UNIVERSAL_STONES.length);
         for (String stone : UNIVERSAL_STONES) {
-            ids.add(ResourceLocation.fromNamespaceAndPath(UNIVERSAL_ORES, stone + "_" + ore + "_ore"));
+            ids.add(new ResourceLocation(UNIVERSAL_ORES, stone + "_" + ore + "_ore"));
         }
         return new ModdedOres(ids);
     }

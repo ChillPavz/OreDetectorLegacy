@@ -67,7 +67,7 @@ public final class ModItems {
     // Optional Create integration. Created LAZILY and only when Create is installed, matching the
     // newer ports; here there is no id baked into the properties, so the item is simply registered
     // under ZINC_ID by the loader entrypoints. Kept OUT of ITEMS.
-    public static final ResourceLocation ZINC_ID = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "zinc_detector");
+    public static final ResourceLocation ZINC_ID = new ResourceLocation(Constants.MOD_ID, "zinc_detector");
     public static Item ZINC_DETECTOR = null;
 
     private ModItems() {
@@ -75,7 +75,7 @@ public final class ModItems {
 
     /** Builds the zinc detector on demand; call ONLY when Create is present, then register it. */
     public static Item createZinc() {
-        TagKey<Item> zincIngots = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "ingots/zinc"));
+        TagKey<Item> zincIngots = TagKey.create(Registries.ITEM, new ResourceLocation("c", "ingots/zinc"));
         ZINC_DETECTOR = new ZincDetector(new Item.Properties().durability(OreDetectorConfig.scaleDurability(200)));
         REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> stack.is(zincIngots));
         return ZINC_DETECTOR;
@@ -88,7 +88,7 @@ public final class ModItems {
     }
 
     private static Item create(String name, int durability, Item repairMaterial, Function<Item.Properties, Item> factory) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceLocation id = new ResourceLocation(Constants.MOD_ID, name);
         Item.Properties properties = new Item.Properties()
                 .durability(OreDetectorConfig.scaleDurability(durability));
         Item item = factory.apply(properties);

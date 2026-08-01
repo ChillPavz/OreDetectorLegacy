@@ -2,6 +2,7 @@ package com.chillpavz.oredetector.forge;
 
 import com.chillpavz.oredetector.forge.config.OreDetectorConfigData;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -18,8 +19,13 @@ final class OreDetectorConfigScreenRegistrar {
     }
 
     static void register() {
+        // Use the BiFunction<Minecraft, Screen, Screen> constructor, NOT the shorter Function<Screen,
+        // Screen> one: the latter only exists from Forge 47 (1.20.1), so it would throw
+        // NoSuchMethodError for anyone on Forge 46 (1.20), which this jar also supports. The
+        // BiFunction form is present in both. Verified with javap against 46.0.14 and 47.2.30.
         ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
                 () -> new ConfigScreenHandler.ConfigScreenFactory(
-                        (Screen parent) -> AutoConfig.getConfigScreen(OreDetectorConfigData.class, parent).get()));
+                        (Minecraft minecraft, Screen parent) ->
+                                AutoConfig.getConfigScreen(OreDetectorConfigData.class, parent).get()));
     }
 }

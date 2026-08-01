@@ -22,7 +22,7 @@ public final class ModSounds {
     }
 
     private static SoundEvent create(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceLocation id = new ResourceLocation(Constants.MOD_ID, name);
         SoundEvent sound = SoundEvent.createVariableRangeEvent(id);
         SOUND_EVENTS.put(id, sound);
         return sound;
