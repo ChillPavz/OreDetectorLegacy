@@ -2,6 +2,7 @@ package com.chillpavz.oredetector.registry;
 
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Function;
@@ -21,6 +22,7 @@ import com.chillpavz.oredetector.item.OreDetectorItem;
 import com.chillpavz.oredetector.item.QuartzDetector;
 import com.chillpavz.oredetector.item.RedstoneDetector;
 import com.chillpavz.oredetector.item.ZincDetector;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
@@ -75,15 +77,31 @@ public final class ModItems {
 
     /** Builds the zinc detector on demand; call ONLY when Create is present, then register it. */
     public static Item createZinc() {
-        // Two tag conventions are in play at this Minecraft version: Forge mods use `forge:`, Fabric
-        // mods use `c:` (they only converged on `c:` later). Create is Forge-only here and ships
-        // forge:ingots/zinc - verified from its 1.20.1 jar - so matching only `c:` would leave the
-        // Zinc Detector unrepairable in an anvil, silently. Accept either; a tag no mod fills is
-        // simply empty, so the unused one never matches.
-        TagKey<Item> forgeZinc = TagKey.create(Registries.ITEM, new ResourceLocation("forge", "ingots/zinc"));
-        TagKey<Item> commonZinc = TagKey.create(Registries.ITEM, new ResourceLocation("c", "ingots/zinc"));
+        // THREE different zinc tag spellings are in play, so don't rely on tags alone. Verified by
+        // reading each jar:
+        //   Create (Forge, 1.20.1)  -> forge:ingots/zinc
+        //   Create Fabric (1.20.1)  -> c:zinc_ingots      (the older Fabric plural form)
+        //   Create / Create Fly on 1.21.x and 26.x -> c:ingots/zinc
+        // Matching the ingot by REGISTRY ID as well - the same trick ModdedOres uses for blocks -
+        // makes anvil repair work whichever build is installed, and keeps working if the convention
+        // shifts again. The tags stay as a bonus so any other mod's zinc ingot repairs it too.
+        ResourceLocation zincIngotId = new ResourceLocation("create", "zinc_ingot");
+        List<TagKey<Item>> zincTags = List.of(
+                TagKey.create(Registries.ITEM, new ResourceLocation("forge", "ingots/zinc")),
+                TagKey.create(Registries.ITEM, new ResourceLocation("c", "zinc_ingots")),
+                TagKey.create(Registries.ITEM, new ResourceLocation("c", "ingots/zinc")));
         ZINC_DETECTOR = new ZincDetector(new Item.Properties().durability(OreDetectorConfig.scaleDurability(200)));
-        REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> stack.is(forgeZinc) || stack.is(commonZinc));
+        REPAIR_INGREDIENTS.put(ZINC_DETECTOR, stack -> {
+            if (zincIngotId.equals(BuiltInRegistries.ITEM.getKey(stack.getItem()))) {
+                return true;
+            }
+            for (TagKey<Item> tag : zincTags) {
+                if (stack.is(tag)) {
+                    return true;
+                }
+            }
+            return false;
+        });
         return ZINC_DETECTOR;
     }
 
