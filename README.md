@@ -47,12 +47,13 @@ On Fabric the button comes from Mod Menu; on Forge it's the Config button in the
 | Fabric API | required | — | |
 | Cloth Config | required | required | powers the config screen |
 | Mod Menu | optional | — | adds the config button on Fabric |
-| Create | — | optional | unlocks the Zinc Detector |
+| Create / Create Fabric | optional | optional | unlocks the Zinc Detector (1.20.1 only) |
 | Universal Ores | optional | — | its ore variants are detected too |
 
-The optional mods land on opposite loaders here: at 1.20.1 **Create is Forge/NeoForge only**, while
-**Universal Ores is Fabric/Quilt only**. Create has no 1.20 build at all, so the Zinc Detector is a
-1.20.1 feature; Universal Ores covers both versions.
+The Zinc Detector is available on **both** loaders here: [Create](https://modrinth.com/mod/create)
+for Forge/NeoForge and the separate [Create Fabric](https://modrinth.com/mod/create-fabric) port for
+Fabric. Neither has a 1.20 build, so it is a 1.20.1-only feature. **Universal Ores is Fabric/Quilt
+only** and does cover both versions.
 
 ## Building
 
