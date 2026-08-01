@@ -28,9 +28,12 @@ A single build per loader covers **1.20 and 1.20.1**. The upper bound stops belo
 the data-pack folders and rewrote networking.
 
 **There is no NeoForge module.** At this Minecraft version NeoForge still uses the
-`net.minecraftforge` package names and the `forge` mod id, so the Forge jar runs on it unchanged,
-Create itself ships one file tagged for both loaders here. The version ranges accept NeoForge's
-47.1.x builds, so the Forge download is also the NeoForge download.
+`net.minecraftforge` package names and *provides the `forge` mod id*, so the Forge jar runs on it
+unchanged. Create itself ships one file tagged for both loaders here. The version ranges accept
+NeoForge's 47.1.x builds, so the Forge download is also the NeoForge download.
+
+The same applies to **Cloth Config**: it has no `neoforge` tag at this version, but its Forge build
+depends on `forge` just like ours does, so it loads on NeoForge too. Install the Forge build.
 
 ## Config
 
