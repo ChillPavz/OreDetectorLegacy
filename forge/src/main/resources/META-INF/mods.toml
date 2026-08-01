@@ -16,7 +16,7 @@ description = '''${description}''' #mandatory (Supports multiline text)
 [[dependencies.${mod_id}]]
 modId = "forge"
 mandatory = true
-versionRange = "[${forge_version},)"
+versionRange = "${forge_version_range}"
 ordering = "NONE"
 side = "BOTH"
 
